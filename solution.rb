@@ -22,4 +22,16 @@ pw_key = ENV.fetch("PW_KEY")
 pw_url = "https://api.pirateweather.net/forecast/#{pw_key}/#{lat},#{lng}"
 pw_raw_response = HTTP.get(pw_url)
 pw_parsed_response = JSON.parse(pw_raw_response)
-pp pw_parsed_response.fetch("currently").fetch("temperature")
+temp = pw_parsed_response.fetch("currently").fetch("temperature")
+pp temp
+
+## precipitation
+prec_ten_hours = []
+
+i=0
+while i<10
+  prec_ten_hours [i]= pw_parsed_response.fetch("hourly").fetch("data")[i].fetch("precipProbability")
+  i=i+1
+end
+
+pp prec_ten_hours
