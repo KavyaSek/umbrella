@@ -7,7 +7,6 @@ require "awesome_print"
 ## get and store location
 pp "What is your location?"
 location = gets.chomp
-pp "You are in #{location}"
 
 ## google maps api, to update lat and lng
 gmaps_key = ENV.fetch("GMAPS_KEY")
@@ -23,15 +22,25 @@ pw_url = "https://api.pirateweather.net/forecast/#{pw_key}/#{lat},#{lng}"
 pw_raw_response = HTTP.get(pw_url)
 pw_parsed_response = JSON.parse(pw_raw_response)
 temp = pw_parsed_response.fetch("currently").fetch("temperature")
-pp temp
+pp "You are in #{location} and the current temperature is #{temp}"
 
-## precipitation
-prec_ten_hours = []
+
+## precipitation array for the next 12 hours
+prec_twelve_hours = []
 
 i=0
-while i<10
-  prec_ten_hours [i]= pw_parsed_response.fetch("hourly").fetch("data")[i].fetch("precipProbability")
+while i<12
+  prec_twelve_hours [i]= pw_parsed_response.fetch("hourly").fetch("data")[i].fetch("precipProbability")
   i=i+1
 end
 
-pp prec_ten_hours
+found = false
+prec_twelve_hours.each_with_index do |value, index|
+  if value > 0.1
+    pp "The precipitation probability in the next #{index+1} hours is #{value}. You might want to carry an umbrella!"
+    found = true
+    break
+  end
+end
+
+pp "You probably won’t need an umbrella today" unless found
